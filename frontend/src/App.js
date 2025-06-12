@@ -36,7 +36,7 @@ function App() {
   return (
     <div className="app-container">
       {showAlert && <EmergencyAlert onClose={() => setShowAlert(false)} />}
-      
+
       <header className="app-header">
         <div className="header-content">
           <div className="logo-container">
@@ -60,21 +60,21 @@ function App() {
                 <h3>Navigation</h3>
               </div>
               <ul className="nav-menu">
-                <li 
+                <li
                   className={activeTab === 'queue' ? 'active' : ''}
                   onClick={() => setActiveTab('queue')}
                 >
                   <FiClock className="nav-icon" />
                   <span>Patient Queue</span>
                 </li>
-                <li 
+                <li
                   className={activeTab === 'ot' ? 'active' : ''}
                   onClick={() => setActiveTab('ot')}
                 >
                   <FiActivity className="nav-icon" />
                   <span>OT Status</span>
                 </li>
-                <li 
+                <li
                   className={activeTab === 'inventory' ? 'active' : ''}
                   onClick={() => setActiveTab('inventory')}
                 >
@@ -86,7 +86,7 @@ function App() {
                   <span>Emergency Alert</span>
                 </li>
               </ul>
-              <button 
+              <button
                 className="logout-button"
                 onClick={() => setIsLoggedIn(false)}
               >

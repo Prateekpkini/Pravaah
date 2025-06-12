@@ -2,25 +2,56 @@
 const express = require('express');
 const Queue = require('../models/Queue');
 
-const router = express.Router();
+module.exports = function(io) {
+  const router = express.Router();
 
-module.exports = (io) => {
+  // Get all tokens
   router.get('/', async (req, res) => {
-    const queues = await Queue.find();
-    res.json(queues);
+    try {
+      const queues = await Queue.find().sort({ createdAt: -1 });
+      res.json(queues);
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching queues' });
+    }
   });
 
+  // Add new token
   router.post('/', async (req, res) => {
-    const queue = new Queue(req.body);
-    await queue.save();
-    io.emit('queue-update');
-    res.json(queue);
+    try {
+      const { token, chamber, department, status } = req.body;
+      const newQueue = new Queue({ token, chamber, department, status });
+      await newQueue.save();
+      io.emit('queue-update');
+      res.status(201).json(newQueue);
+    } catch (error) {
+      res.status(400).json({ error: 'Error adding token' });
+    }
   });
 
-  router.patch('/:id', async (req, res) => {
-    const queue = await Queue.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    io.emit('queue-update');
-    res.json(queue);
+  // Update token status
+  router.put('/:id', async (req, res) => {
+    try {
+      const updatedQueue = await Queue.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      io.emit('queue-update');
+      res.json(updatedQueue);
+    } catch (error) {
+      res.status(400).json({ error: 'Error updating token' });
+    }
+  });
+
+  // Delete token
+  router.delete('/:id', async (req, res) => {
+    try {
+      await Queue.findByIdAndDelete(req.params.id);
+      io.emit('queue-update');
+      res.json({ message: 'Token removed' });
+    } catch (error) {
+      res.status(500).json({ error: 'Error deleting token' });
+    }
   });
 
   return router;
