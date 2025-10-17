@@ -9,28 +9,97 @@ import EmergencyAlert from './components/EmergencyAlert';
 import HospitalIllustration from './assets/hospital-illustration.svg';
 import { FiLogIn, FiLogOut, FiAlertTriangle, FiClock, FiActivity, FiPackage } from 'react-icons/fi';
 
+const LOADING_TIMEOUT = 1500;
+
+const LoadingScreen = () => (
+  <div className="loading-screen">
+    <div className="loading-animation">
+      <div className="pulse-logo">🏥</div>
+      <h2>Initializing Pravaah System</h2>
+      <div className="loading-bar"></div>
+    </div>
+  </div>
+);
+
+const NavItem = ({ icon: Icon, label, isActive, onClick }) => (
+  <li className={isActive ? 'active' : ''}>
+    <button onClick={onClick}>
+      <Icon className="nav-icon" />
+      <span>{label}</span>
+    </button>
+  </li>
+);
+
+const Dashboard = ({ onLogout, onShowAlert }) => {
+  const [activeTab, setActiveTab] = useState('queue');
+
+  const TABS = {
+    queue: {
+      label: 'Patient Queue',
+      icon: FiClock,
+      component: <><QueueDisplay /><StaffDashboard /></>
+    },
+    ot: {
+      label: 'OT Status',
+      icon: FiActivity,
+      component: <OTStatus />
+    },
+    inventory: {
+      label: 'Inventory',
+      icon: FiPackage,
+      component: <InventoryStatus />
+    }
+  };
+
+  return (
+    <div className="dashboard-container">
+      <nav className="sidebar">
+        <div className="sidebar-header">
+          <h3>Navigation</h3>
+        </div>
+        <ul className="nav-menu">
+          {Object.entries(TABS).map(([key, { label, icon }]) => (
+            <NavItem
+              key={key}
+              icon={icon}
+              label={label}
+              isActive={activeTab === key}
+              onClick={() => setActiveTab(key)}
+            />
+          ))}
+          <li className="emergency-nav-item">
+            <button onClick={onShowAlert}>
+              <FiAlertTriangle className="nav-icon" />
+              <span>Emergency Alert</span>
+            </button>
+          </li>
+        </ul>
+        <button className="logout-button" onClick={onLogout}>
+          <FiLogOut className="nav-icon" />
+          <span>Logout</span>
+        </button>
+      </nav>
+
+      <div className="content-area">
+        {TABS[activeTab].component}
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [activeTab, setActiveTab] = useState('queue');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Simulate loading
-    const timer = setTimeout(() => setIsLoading(false), 1500);
+    const timer = setTimeout(() => setIsLoading(false), LOADING_TIMEOUT);
     return () => clearTimeout(timer);
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-animation">
-          <div className="pulse-logo">🏥</div>
-          <h2>Initializing Pravaah System</h2>
-          <div className="loading-bar"></div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -54,58 +123,10 @@ function App() {
 
       <main className="app-main">
         {isLoggedIn ? (
-          <div className="dashboard-container">
-            <nav className="sidebar">
-              <div className="sidebar-header">
-                <h3>Navigation</h3>
-              </div>
-              <ul className="nav-menu">
-                <li
-                  className={activeTab === 'queue' ? 'active' : ''}
-                  onClick={() => setActiveTab('queue')}
-                >
-                  <FiClock className="nav-icon" />
-                  <span>Patient Queue</span>
-                </li>
-                <li
-                  className={activeTab === 'ot' ? 'active' : ''}
-                  onClick={() => setActiveTab('ot')}
-                >
-                  <FiActivity className="nav-icon" />
-                  <span>OT Status</span>
-                </li>
-                <li
-                  className={activeTab === 'inventory' ? 'active' : ''}
-                  onClick={() => setActiveTab('inventory')}
-                >
-                  <FiPackage className="nav-icon" />
-                  <span>Inventory</span>
-                </li>
-                <li className="emergency-nav-item" onClick={() => setShowAlert(true)}>
-                  <FiAlertTriangle className="nav-icon" />
-                  <span>Emergency Alert</span>
-                </li>
-              </ul>
-              <button
-                className="logout-button"
-                onClick={() => setIsLoggedIn(false)}
-              >
-                <FiLogOut className="nav-icon" />
-                <span>Logout</span>
-              </button>
-            </nav>
-
-            <div className="content-area">
-              {activeTab === 'queue' && (
-                <>
-                  <QueueDisplay />
-                  <StaffDashboard />
-                </>
-              )}
-              {activeTab === 'ot' && <OTStatus />}
-              {activeTab === 'inventory' && <InventoryStatus />}
-            </div>
-          </div>
+          <Dashboard
+            onLogout={() => setIsLoggedIn(false)}
+            onShowAlert={() => setShowAlert(true)}
+          />
         ) : (
           <div className="auth-container">
             <Login onLogin={() => setIsLoggedIn(true)} />

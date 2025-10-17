@@ -1,8 +1,14 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders loading screen and then the main application', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  // Check for loading screen
+  expect(screen.getByText(/Initializing Pravaah System/i)).toBeInTheDocument();
+
+  // Wait for the main content to appear after the loading simulation
+  await waitFor(() => {
+    expect(screen.getByText(/Pravaah Hospital Management System/i)).toBeInTheDocument();
+  }, { timeout: 2000 }); // Wait for timeout + buffer
 });
