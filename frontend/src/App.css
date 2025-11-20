@@ -1,40 +1,12 @@
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to right, #d1f2f6, #e6f7fb);
-  padding: 2rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.header-content {
-  max-width: 60%;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logo {
-  font-size: 2.5rem;
-}
-
-.tagline {
-  font-size: 1rem;
-  color: #555;
-  margin-top: 0.5rem;
-}
-
-.header-illustration img {
-  height: 180px;
-}
-
+/*
+================================================================================
+Root & Variables
+================================================================================
+*/
 :root {
   --primary: #3b82f6;
   --primary-dark: #2563eb;
-  --primary-light: #93c5fd;
+  --primary-light: #dbeafe;
   --secondary: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
@@ -49,9 +21,12 @@
 
   --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0,
+      0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0,
+      0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0,
+      0, 0.04);
   --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --shadow-primary: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
 
@@ -67,6 +42,11 @@
   --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/*
+================================================================================
+Global Styles
+================================================================================
+*/
 * {
   margin: 0;
   padding: 0;
@@ -74,7 +54,8 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.5;
   color: var(--dark);
   background-color: var(--gray-lighter);
@@ -82,7 +63,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Loading Screen */
+/*
+================================================================================
+Loading Screen
+================================================================================
+*/
 .loading-screen {
   display: flex;
   justify-content: center;
@@ -128,11 +113,9 @@ body {
     transform: scale(0.8);
     opacity: 0;
   }
-
   50% {
     opacity: 0.7;
   }
-
   100% {
     transform: scale(1.2);
     opacity: 0;
@@ -186,13 +169,16 @@ body {
   0% {
     left: -20%;
   }
-
   100% {
     left: 100%;
   }
 }
 
-/* App Container */
+/*
+================================================================================
+App Layout
+================================================================================
+*/
 .app-container {
   display: flex;
   flex-direction: column;
@@ -358,11 +344,9 @@ body {
     transform: scale(0.9);
     opacity: 0;
   }
-
   50% {
     opacity: 0.5;
   }
-
   100% {
     transform: scale(1.1);
     opacity: 0;
@@ -390,10 +374,14 @@ body {
 .dashboard-container {
   display: flex;
   gap: 2rem;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 120px); /* Adjust based on header/footer height */
 }
 
-/* Sidebar */
+/*
+================================================================================
+Sidebar
+================================================================================
+*/
 .sidebar {
   width: 280px;
   background: rgba(255, 255, 255, 0.95);
@@ -404,6 +392,7 @@ body {
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: var(--transition-slow);
 }
 
 .sidebar-header {
@@ -428,6 +417,7 @@ body {
   justify-content: center;
   color: var(--primary-dark);
   font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .user-info h4 {
@@ -447,27 +437,31 @@ body {
   padding: 0 0.5rem;
 }
 
-.nav-menu li {
-  padding: 0.75rem 1.25rem;
-  cursor: pointer;
+.nav-item {
   display: flex;
   align-items: center;
-  position: relative;
+  padding: 0.75rem 1.25rem;
   margin-bottom: 0.25rem;
-  border-radius: var(--rounded);
+  border-radius: var(--rounded-md);
+  cursor: pointer;
+  position: relative;
   transition: var(--transition);
+  color: var(--gray);
+  font-weight: 500;
 }
 
-.nav-menu li:hover {
+.nav-item:hover {
   background-color: var(--gray-lighter);
+  color: var(--dark);
 }
 
-.nav-menu li.active {
-  background-color: var(--primary-light);
+.nav-item.active {
+  background: var(--primary-light);
   color: var(--primary-dark);
+  font-weight: 600;
 }
 
-.nav-menu li.active .nav-icon {
+.nav-item.active .nav-icon {
   color: var(--primary-dark);
 }
 
@@ -476,15 +470,16 @@ body {
   font-size: 1.25rem;
   width: 24px;
   text-align: center;
+  transition: var(--transition);
 }
 
 .active-indicator {
   position: absolute;
-  right: 1rem;
-  width: 8px;
-  height: 8px;
+  right: 0;
+  width: 4px;
+  height: 24px;
   background-color: var(--primary);
-  border-radius: var(--rounded-full);
+  border-radius: var(--rounded-full) 0 0 var(--rounded-full);
 }
 
 .emergency-nav-item {
@@ -511,12 +506,10 @@ body {
     transform: scale(1);
     opacity: 1;
   }
-
   50% {
     transform: scale(1.3);
     opacity: 0.7;
   }
-
   100% {
     transform: scale(1);
     opacity: 1;
@@ -574,19 +567,24 @@ body {
   background-color: rgba(239, 68, 68, 0.1);
 }
 
-/* Content Area */
+/*
+================================================================================
+Content Area
+================================================================================
+*/
 .content-area {
   flex: 1;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: var(--rounded-xl);
-  box-shadow: var(--shadow-sm);
-  padding: 1.5rem;
+  background: transparent;
+  padding: 0 1rem;
   overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: var(--transition-slow);
 }
 
-/* Footer */
+/*
+================================================================================
+Footer
+================================================================================
+*/
 .app-footer {
   background: var(--dark);
   color: var(--gray-light);
@@ -660,7 +658,11 @@ body {
   color: var(--white);
 }
 
-/* Responsive Design */
+/*
+================================================================================
+Responsive Design
+================================================================================
+*/
 @media (max-width: 1024px) {
   .dashboard-container {
     height: auto;
@@ -715,7 +717,11 @@ body {
   }
 }
 
-/* Animation Classes */
+/*
+================================================================================
+Animation & Utility Classes
+================================================================================
+*/
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -724,7 +730,6 @@ body {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -739,14 +744,17 @@ body {
     transform: translateY(20px);
     opacity: 0;
   }
-
   to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 
-/* Module Cards */
+/*
+================================================================================
+Module-specific Styles
+================================================================================
+*/
 .module-card {
   background: var(--white);
   padding: 1.5rem;
@@ -771,7 +779,6 @@ body {
   gap: 0.5rem;
 }
 
-/* Emergency Button */
 .emergency-button {
   background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
   color: white;
