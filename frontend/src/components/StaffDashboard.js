@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { getQueues, updateQueue } from '../services/api';
 
-export default function StaffDashboard({ onLogout }) {
+export default function StaffDashboard() {
   const [queues, setQueues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
-    const res = await getQueues();
-    setQueues(res.data);
+    try {
+      setLoading(true);
+      const res = await getQueues();
+      setQueues(res.data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch data.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -14,25 +24,32 @@ export default function StaffDashboard({ onLogout }) {
   }, []);
 
   const handleStatusChange = async (id, status) => {
-    await updateQueue(id, { status });
-    fetchData();
+    try {
+      const updatedQueue = await updateQueue(id, { status });
+      setQueues((prevQueues) =>
+        prevQueues.map((q) => (q._id === id ? updatedQueue.data : q))
+      );
+    } catch (err) {
+      setError('Failed to update status.');
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="staff-dashboard">
       <h2>Staff Dashboard</h2>
-      <button onClick={onLogout} className="logout-button">Logout</button>
       {queues.map((q) => (
         <div key={q._id} className="queue-card">
           <div><strong>{q.department}</strong> — Token {q.token}</div>
           <select
             value={q.status}
-            onChange={(e) => handleStatusChange(q._id, e.target.value)}
+            onChange={(e) => handleStatuschange(q._id, e.target.value)}
           >
-            <option value="waiting">Waiting</option>
-            <option value="in-service">In Service</option>
-            <option value="completed">Completed</option>
-            <option value="emergency">Emergency</option>
+            <option value="Waiting">Waiting</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
           </select>
         </div>
       ))}

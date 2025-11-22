@@ -1,28 +1,39 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { login } from '../services/auth';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username === 'staff' && password === '1234') {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await login(username, password);
       onLogin();
-    } else {
-      alert('Invalid credentials. Try staff/1234');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       <h2>Staff Login</h2>
+      {error && <div className="error-message">{error}</div>}
       <input
         type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         required
+        disabled={isLoading}
       />
       <input
         type="password"
@@ -30,8 +41,11 @@ export default function Login({ onLogin }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
+        disabled={isLoading}
       />
-      <button type="submit">Login</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Logging In...' : 'Login'}
+      </button>
     </form>
   );
 }

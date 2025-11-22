@@ -6,23 +6,17 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:5000');
 
-// Dummy token data if backend is unavailable
-const demoTokens = [
-  { token: 'A101', chamber: 'Dr. Ramesh (Chamber 1)', department: 'OPD', status: 'Waiting' },
-  { token: 'A102', chamber: 'Dr. Neha (Chamber 2)', department: 'ENT', status: 'In Progress' },
-  { token: 'A103', chamber: 'Dr. Aman (Chamber 3)', department: 'Cardiology', status: 'Waiting' },
-  { token: 'A104', chamber: 'Dr. Sneha (Chamber 4)', department: 'Orthopaedics', status: 'Completed' },
-];
-
 export default function QueueDisplay() {
   const [queues, setQueues] = useState([]);
+  const [error, setError] = useState(null);
 
   const fetchQueues = async () => {
     try {
       const res = await getQueues();
       setQueues(res.data);
+      setError(null);
     } catch (error) {
-      setQueues(demoTokens); // fallback to demo data
+      setError('Failed to fetch queue data. Please try again later.');
     }
   };
 
@@ -35,9 +29,10 @@ export default function QueueDisplay() {
   return (
     <div className="queue-display-container">
       <h2>🧾 Current Token Status</h2>
+      {error && <div className="error-message">{error}</div>}
       <div className="token-bubble-wrapper">
-        {queues.map((q, idx) => (
-          <div className={`token-bubble status-${q.status.toLowerCase().replace(' ', '-')}`} key={idx}>
+        {queues.map((q) => (
+          <div className={`token-bubble status-${q.status.toLowerCase().replace(' ', '-')}`} key={q.token}>
             <div className="token-number">{q.token}</div>
             <div className="token-details">
               <strong>{q.department}</strong><br />
