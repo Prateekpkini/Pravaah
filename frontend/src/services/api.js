@@ -10,3 +10,7 @@ export const updateQueue = (id, data) => API.put(`/queues/${id}`, data);
 export const getOTs = () => API.get('/ots');
 export const updateOT = (id, data) => API.put(`/ots/${id}`, data);
 
+export const getInventories = () => API.get('/inventories');
+export const updateInventory = (id, data) => API.put(`/inventories/${id}`, data);
+
+
