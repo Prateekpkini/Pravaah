@@ -1,13 +1,14 @@
 // backend/seed.js
 const mongoose = require('mongoose');
 const Queue = require('./models/Queue');
+const OT = require('./models/OT');
 
 mongoose.connect('mongodb://127.0.0.1:27017/hospital-queue', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
   console.log('MongoDB connected');
-  return Queue.deleteMany({});
+  return Promise.all([Queue.deleteMany({}), OT.deleteMany({})]);
 }).then(() => {
   const sampleQueues = [
     {
@@ -42,7 +43,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/hospital-queue', {
     }
   ];
 
-  return Queue.insertMany(sampleQueues);
+  const sampleOTs = [
+    { room: 'OT-1', status: 'Scheduled', patient: 'Token 12' },
+    { room: 'OT-2', status: 'In Use', patient: 'Token 18' },
+    { room: 'OT-3', status: 'Available', patient: '-' },
+  ];
+
+  return Promise.all([Queue.insertMany(sampleQueues), OT.insertMany(sampleOTs)]);
 }).then(() => {
   console.log('Seed data inserted successfully!');
   process.exit();
